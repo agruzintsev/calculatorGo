@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"sort"
 	"strconv"
 	"strings"
 )
@@ -14,21 +15,29 @@ func main() {
 		input := bufio.NewScanner(os.Stdin)
 		input.Scan()
 		expression := input.Text()
-		firstNum, secondNum := NumCheck(expression)
+
+		firstNum, secondNum, isRome := NumCheck(expression)
 
 		str := strings.Split(expression, " ")
 		operator := str[1]
 
 		result := calc(firstNum, secondNum, operator)
-		fmt.Println(result)
+		if isRome && result > 0 {
+			resultRome, _ := ArabToRome(result)
+			fmt.Println(resultRome)
+		} else if isRome && result <= 0 {
+			panic("В римской системе счисления результат должен быть больше 0")
+		} else {
+			fmt.Println(result)
+		}
 	}
 }
 
-func NumCheck(expression string) (int, int) {
+func NumCheck(expression string) (int, int, bool) {
 	str := strings.Split(expression, " ")
 
-	isRome1, _ := RomeOrArab(str[0])
-	isRome2, _ := RomeOrArab(str[2])
+	isRome1 := RomeOrArab(str[0])
+	isRome2 := RomeOrArab(str[2])
 
 	var firstNum, secondNum int
 	var err error
@@ -52,13 +61,12 @@ func NumCheck(expression string) (int, int) {
 			panic(err)
 		}
 	} else {
-		panic("Только арабские или только римские цифры")
 	}
 
 	if firstNum > 10 || firstNum < 1 || secondNum > 10 || secondNum < 1 {
 		panic("Числа должны быть от 1 до 10")
 	}
-	return firstNum, secondNum
+	return firstNum, secondNum, isRome1
 }
 
 func calc(firstNum, secondNum int, operator string) int {
@@ -92,9 +100,43 @@ func RomeToArab(rome string) (int, error) {
 	return romeMap[rome], nil
 }
 
-func RomeOrArab(s string) (bool, error) {
-	if s == "I" || s == "II" || s == "III" || s == "IV" || s == "V" || s == "VI" || s == "VII" || s == "VIII" || s == "IX" || s == "X" {
-		return true, nil
+func ArabToRome(num int) (string, error) {
+	if num < 1 || num > 100 {
+		return "", fmt.Errorf("число должно быть от 1 до 100")
 	}
-	return false, nil
+
+	romeMap := map[int]string{
+		100: "C",
+		90:  "XC",
+		50:  "L",
+		40:  "XL",
+		10:  "X",
+		9:   "IX",
+		5:   "V",
+		4:   "IV",
+		1:   "I",
+	}
+
+	keys := make([]int, 0, len(romeMap))
+	for k := range romeMap {
+		keys = append(keys, k)
+	}
+	sort.Sort(sort.Reverse(sort.IntSlice(keys)))
+
+	var result strings.Builder
+	for _, k := range keys {
+		for num >= k {
+			result.WriteString(romeMap[k])
+			num -= k
+		}
+	}
+
+	return result.String(), nil
+}
+
+func RomeOrArab(s string) bool {
+	if s == "I" || s == "II" || s == "III" || s == "IV" || s == "V" || s == "VI" || s == "VII" || s == "VIII" || s == "IX" || s == "X" {
+		return true
+	}
+	return false
 }
