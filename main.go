@@ -101,7 +101,6 @@ func RomeToArab(rome string) (int, error) {
 }
 
 func ArabToRome(num int) (string, error) {
-
 	romeMap := map[int]string{
 		100: "C",
 		90:  "XC",
