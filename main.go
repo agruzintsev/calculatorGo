@@ -11,7 +11,7 @@ import (
 
 func main() {
 	for {
-		fmt.Println("Введите выражение: ")
+		fmt.Print("Введите выражение: ")
 		input := bufio.NewScanner(os.Stdin)
 		input.Scan()
 		expression := input.Text()
@@ -101,9 +101,6 @@ func RomeToArab(rome string) (int, error) {
 }
 
 func ArabToRome(num int) (string, error) {
-	if num < 1 || num > 100 {
-		return "", fmt.Errorf("число должно быть от 1 до 100")
-	}
 
 	romeMap := map[int]string{
 		100: "C",
