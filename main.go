@@ -28,13 +28,17 @@ func main() {
 		} else if isRome && result <= 0 {
 			panic("В римской системе счисления результат должен быть больше 0")
 		} else {
-			fmt.Println(result)
+			fmt.Println("Ответ:", result)
 		}
 	}
 }
 
 func NumCheck(expression string) (int, int, bool) {
 	str := strings.Split(expression, " ")
+
+	if len(str) != 3 {
+		panic("Неверный формат математической операции")
+	}
 
 	isRome1 := RomeOrArab(str[0])
 	isRome2 := RomeOrArab(str[2])
@@ -45,22 +49,23 @@ func NumCheck(expression string) (int, int, bool) {
 	if isRome1 && isRome2 {
 		firstNum, err = RomeToArab(str[0])
 		if err != nil {
-			panic(err)
+			panic("Неверный формат чисел")
 		}
 		secondNum, err = RomeToArab(str[2])
 		if err != nil {
-			panic(err)
+			panic("Неверный формат чисел")
 		}
 	} else if !isRome1 && !isRome2 {
 		firstNum, err = strconv.Atoi(str[0])
 		if err != nil {
-			panic(err)
+			panic("Неверный формат чисел")
 		}
 		secondNum, err = strconv.Atoi(str[2])
 		if err != nil {
-			panic(err)
+			panic("Неверный формат чисел")
 		}
 	} else {
+		panic("Допускается ввод только арабских или только римских чисел")
 	}
 
 	if firstNum > 10 || firstNum < 1 || secondNum > 10 || secondNum < 1 {
